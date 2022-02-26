@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -9,7 +10,6 @@ import (
 )
 
 func main() {
-
 	args := os.Args
 
 	//im just about 100% sure this is an illegal way of handling cmdline arguments but i hate programming this kind of really basic io,
@@ -110,11 +110,21 @@ func deleteFiles(names []string) {
 }
 
 func shredFiles(names []string) {
-	for _, file := range names {
-		for i := 0; i < 5; i++ {
-			randomOverwriteFile(file)
+
+	files := filesFromDirs(names)
+
+	fmt.Println(files)
+
+	printFileActions(files, 5)
+
+	pterm.NewStyle(pterm.FgRed, pterm.Bold).Println("This deletion cannot be undone by any process, including professional drive recovery")
+	if printYesNoPrompt("Are you sure you want to delete these files permanently and irretrievably?", false) {
+		for _, file := range files {
+			for i := 0; i < 5; i++ {
+				randomOverwriteFile(file)
+			}
+			os.Remove(file)
 		}
-		os.Remove(file)
 	}
 }
 

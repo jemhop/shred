@@ -69,20 +69,23 @@ func getAllPathArgs(args []string, trashDir bool) []string {
 }
 
 func randomOverwriteFile(path string) {
-	f, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
 	stat, err := os.Stat(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	len := stat.Size()
+	//file mode doesn't really matter, new file will never be created
+	f, err := os.OpenFile(path, os.O_RDWR, os.FileMode(0707))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	size := stat.Size()
 
 	defer f.Close()
 
-	f.WriteAt(nRandomBytes(len), 0)
+	f.WriteAt(nRandomBytes(size), 0)
+
 }
 
 //Returns n bytes from /dev/urandom
@@ -95,15 +98,52 @@ func nRandomBytes(num int64) []byte {
 	}
 	defer file.Close()
 
-	// Read up to len(b) bytes from the File
-	// Zero bytes written means end of file
-	// End of file returns error type io.EOF
 	byteSlice := make([]byte, num)
 	bytesRead, err := file.Read(byteSlice)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Number of bytes read: %d\n", bytesRead)
-	log.Printf("Data read: %s\n", byteSlice)
+	if bytesRead == 0 {
+		log.Fatal("No bytes read from /dev/urandom")
+	}
+
 	return byteSlice
+}
+
+//takes a list of files, and directories and returns a list of all files
+func filesFromDirs(names []string) []string {
+	output := make([]string, 0)
+
+	for _, name := range names {
+		stat, err := os.Stat(name)
+		checkErr(err)
+
+		if !stat.IsDir() {
+			output = append(output, name)
+		} else {
+			err := filepath.Walk(name,
+				func(path string, info os.FileInfo, err error) error {
+					if err != nil {
+						fmt.Println(err)
+						return err
+					}
+					if !info.IsDir() {
+						output = append(output, path)
+					}
+					return nil
+				})
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+
+	}
+
+	return output
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
