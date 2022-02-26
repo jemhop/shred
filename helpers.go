@@ -70,6 +70,7 @@ func getAllPathArgs(args []string, trashDir bool) []string {
 
 func randomOverwriteFile(path string) {
 	stat, err := os.Stat(path)
+	fmt.Println(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -81,7 +82,6 @@ func randomOverwriteFile(path string) {
 	}
 
 	size := stat.Size()
-
 	defer f.Close()
 
 	f.WriteAt(nRandomBytes(size), 0)

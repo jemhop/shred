@@ -113,16 +113,22 @@ func shredFiles(names []string) {
 
 	files := filesFromDirs(names)
 
-	fmt.Println(files)
-
 	printFileActions(files, 5)
 
 	pterm.NewStyle(pterm.FgRed, pterm.Bold).Println("This deletion cannot be undone by any process, including professional drive recovery")
 	if printYesNoPrompt("Are you sure you want to delete these files permanently and irretrievably?", false) {
 		for _, file := range files {
 			for i := 0; i < 5; i++ {
-				randomOverwriteFile(file)
+				stat, err := os.Stat(file)
+				checkErr(err)
+				if stat.Size() > 0 {
+					randomOverwriteFile(file)
+				} else {
+					break
+				}
 			}
+			//TODO delete directories as well
+			fmt.Println("File is 0b, can safely delete")
 			os.Remove(file)
 		}
 	}
