@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -35,14 +35,13 @@ func main() {
 					break
 				} else if arg == "-d" {
 					valid := getAllPathArgs(args[i+1:], false)
-					fmt.Println(valid)
 					deleteFiles(valid)
 					break
 				} else if arg == "-s" {
-					shredFile(args[i+1])
+					shredFiles(args[i+1])
 					break
 				} else if arg == "-e" {
-					eraseFile(args[i+1])
+					eraseFiles(args[i+1])
 				} else {
 					invalid()
 				}
@@ -66,7 +65,7 @@ func recoverFiles(names []string) {
 		infoPath := filepath.Join(getTrashDir(), "info", name+".trashinfo")
 		trashInfo := getTrashInfo(infoPath)
 		origin := filepath.Join(getTrashDir(), "files", trashInfo.name)
-		destination := getSafePath(origin, trashInfo.path, trashInfo.name)
+		destination := getSafePath(origin, trashInfo.path)
 
 		spinner.UpdateText("Moving file to " + destination)
 
@@ -81,6 +80,11 @@ func deleteFiles(names []string) {
 	for _, name := range names {
 		spinner, _ := pterm.DefaultSpinner.Start("Checking " + name + " exists")
 
+		workingDir, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		if !fileExists(name, false) {
 			spinner.Fail("File name not found")
 			return
@@ -88,24 +92,27 @@ func deleteFiles(names []string) {
 
 		spinner.UpdateText("Getting safe move path")
 
-		fmt.Println(filepath.Join(getTrashDir(), "files"))
+		//fmt.Println(filepath.Join(getTrashDir(), "files"))
 
-		dest := getSafePath(name, filepath.Join(getTrashDir()), "files")
+		uncheckedDest := filepath.Join(getTrashDir(), "files", filepath.Base(name))
+
+		dest := getSafePath(name, uncheckedDest)
 
 		spinner.UpdateText("Moving file to trash")
 
 		os.Rename(name, dest)
-		createTrashInfo(dest, name)
+		createTrashInfo(name, filepath.Join(workingDir, name))
 
 		spinner.Success(name + " has been moved to trash")
 	}
 
 }
 
-func shredFile(name string) {
+func shredFiles(name string) {
+
 }
 
-func eraseFile(name string) {
+func eraseFiles(name string) {
 
 }
 
@@ -122,7 +129,7 @@ func help() {
 	pterm.DefaultTable.WithBoxed(true).WithHasHeader().WithHeaderStyle(pterm.NewStyle(pterm.FgRed, pterm.Bold)).WithData(pterm.TableData{
 		{"Command", "Usage"},
 		{"l (list)", "Lists all deleted files"},
-		{"r (rescue)", "Recover a file by name"},
+		{"r (restore)", "Recover a file by name (_ will restore all)"},
 		{"d (delete)", "Deletes a file by moving to the trash"},
 		{"s (shred)", "Overwrites a file 5x and deletes permanently "},
 		{"e (erase)", "Deletes a file in the trash permanently"},

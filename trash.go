@@ -98,12 +98,18 @@ func createTrashInfo(filename string, origin string) {
 	//freedesktop trash spec uses RFC3339 format
 	currentTime := time.Now().Format(time.RFC3339)
 
-	f, err := os.Create(filepath.Join(getTrashDir(), "info", filename))
+	filename += ".trashinfo"
+	f, err := os.Create(filepath.Join(getTrashDir(), "info", filepath.Base(filename)))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer f.Close()
+
+	//according to the spec this filepath should be encoded according to rfc 2396, but even dolphin isnt fully compliant with this
+	//it only encodes spaces and nothing else as far as i can tell, but also has no problem restoring from a non encoded string
+	//this is shown as SHOULD in the spec, so im not too bothered. if it causes problems later ill figure it out properly
+	//origin = url.QueryEscape(origin)
 
 	f.WriteString("[Trash Info]\n")
 	f.WriteString("Path=" + origin + "\n")

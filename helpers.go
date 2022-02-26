@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -21,9 +22,10 @@ func fileExists(path string, print bool) bool {
 }
 
 //This function will check for duplicates and append a number to the start of the file name to avoid conflicts
-func getSafePath(origin string, dest string, name string) string {
+func getSafePath(origin string, dest string) string {
 	suffix := ""
 	i := 0
+
 	dest, err := url.QueryUnescape(dest)
 
 	if err != nil {
@@ -31,11 +33,13 @@ func getSafePath(origin string, dest string, name string) string {
 	}
 
 	for {
+		extension := filepath.Ext(dest)
+		noExtension := dest[0 : len(dest)-len(extension)]
 		if fileExists(dest+suffix, false) {
-			conv := strconv.Itoa(i + 2)
+			conv := strconv.Itoa(i + 1)
 			suffix = " (" + conv + ")"
 		} else {
-			return dest + suffix
+			return noExtension + suffix + extension
 		}
 		i++
 	}
@@ -47,7 +51,8 @@ func getAllPathArgs(args []string, trashDir bool) []string {
 
 	for _, arg := range args {
 		if trashDir {
-			if filepath.Base(arg) == "*" {
+			fmt.Println(filepath.Base(arg))
+			if filepath.Base(arg) == "_" {
 				trash := getTrashList()
 				for _, t := range trash {
 					valid = append(valid, t.name)
