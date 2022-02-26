@@ -38,7 +38,8 @@ func main() {
 					deleteFiles(valid)
 					break
 				} else if arg == "-s" {
-					shredFiles(args[i+1])
+					valid := getAllPathArgs(args[i+1:], false)
+					shredFiles(valid)
 					break
 				} else if arg == "-e" {
 					eraseFiles(args[i+1])
@@ -108,8 +109,13 @@ func deleteFiles(names []string) {
 
 }
 
-func shredFiles(name string) {
-
+func shredFiles(names []string) {
+	for _, file := range names {
+		for i := 0; i < 5; i++ {
+			randomOverwriteFile(file)
+		}
+		os.Remove(file)
+	}
 }
 
 func eraseFiles(name string) {

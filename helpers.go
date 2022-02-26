@@ -67,3 +67,43 @@ func getAllPathArgs(args []string, trashDir bool) []string {
 
 	return valid
 }
+
+func randomOverwriteFile(path string) {
+	f, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	stat, err := os.Stat(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	len := stat.Size()
+
+	defer f.Close()
+
+	f.WriteAt(nRandomBytes(len), 0)
+}
+
+//Returns n bytes from /dev/urandom
+func nRandomBytes(num int64) []byte {
+	//If my maths is right, this function is limited to reading about 9.2 petabytes from /dev/urandom due to the max length of an int64
+	//I'm sure this could be overcome with an int128 type (2x int64) but 9.2 petabytes is hopefully more than anyone will ever need to overwrite
+	file, err := os.Open("/dev/urandom")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	// Read up to len(b) bytes from the File
+	// Zero bytes written means end of file
+	// End of file returns error type io.EOF
+	byteSlice := make([]byte, num)
+	bytesRead, err := file.Read(byteSlice)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Number of bytes read: %d\n", bytesRead)
+	log.Printf("Data read: %s\n", byteSlice)
+	return byteSlice
+}
