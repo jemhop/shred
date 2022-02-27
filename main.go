@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -42,7 +41,8 @@ func main() {
 					shredFiles(valid)
 					break
 				} else if arg == "-e" {
-					eraseFiles(args[i+1])
+					valid := getAllPathArgs(args[i+1:], true)
+					eraseFiles(valid)
 				} else {
 					invalid()
 				}
@@ -54,9 +54,9 @@ func main() {
 
 func recoverFiles(names []string) {
 	for _, name := range names {
-		spinner, _ := pterm.DefaultSpinner.Start("Checking " + name + " exists")
+		spinner, _ := pterm.DefaultSpinner.Start("Checking " + name + " is in trash")
 
-		if !checkTrashExists(name) {
+		if !trashExists(name) {
 			spinner.Fail("File name not found")
 			return
 		}
@@ -93,8 +93,6 @@ func deleteFiles(names []string) {
 
 		spinner.UpdateText("Getting safe move path")
 
-		//fmt.Println(filepath.Join(getTrashDir(), "files"))
-
 		uncheckedDest := filepath.Join(getTrashDir(), "files", filepath.Base(name))
 
 		dest := getSafePath(name, uncheckedDest)
@@ -102,7 +100,7 @@ func deleteFiles(names []string) {
 		spinner.UpdateText("Moving file to trash")
 
 		os.Rename(name, dest)
-		createTrashInfo(name, filepath.Join(workingDir, name))
+		createTrashInfo(filepath.Base(dest), filepath.Join(workingDir, name))
 
 		spinner.Success(name + " has been moved to trash")
 	}
@@ -111,31 +109,56 @@ func deleteFiles(names []string) {
 
 func shredFiles(names []string) {
 
-	files := filesFromDirs(names)
+	files := filesFromDirs(names, true)
 
 	printFileActions(files, 5)
 
 	pterm.NewStyle(pterm.FgRed, pterm.Bold).Println("This deletion cannot be undone by any process, including professional drive recovery")
 	if printYesNoPrompt("Are you sure you want to delete these files permanently and irretrievably?", false) {
 		for _, file := range files {
-			for i := 0; i < 5; i++ {
-				stat, err := os.Stat(file)
-				checkErr(err)
-				if stat.Size() > 0 {
-					randomOverwriteFile(file)
-				} else {
-					break
-				}
+
+			spinner, _ := pterm.DefaultSpinner.Start("Shredding " + file)
+
+			stat, err := os.Stat(file)
+			if err != nil {
+				spinner.Fail(file + " doesn't exist, skipping")
+				continue
 			}
-			//TODO delete directories as well
-			fmt.Println("File is 0b, can safely delete")
+
+			if stat.Size() == 0 || stat.IsDir() {
+				spinner.Warning(file + "is 0b or directory, can safely delete")
+			} else {
+				shred(file)
+				spinner.Success(file + "succesfully shredded")
+			}
 			os.Remove(file)
 		}
 	}
 }
 
-func eraseFiles(name string) {
+func eraseFiles(names []string) {
+	for _, name := range names {
+		spinner, _ := pterm.DefaultSpinner.Start("Checking " + name + " is in trash")
 
+		if !trashExists(name) {
+			spinner.Fail("File name not found")
+			return
+		}
+
+		spinner.UpdateText("Getting move path")
+
+		infoPath := filepath.Join(getTrashDir(), "info", name+".trashinfo")
+		trashInfo := getTrashInfo(infoPath)
+		origin := filepath.Join(getTrashDir(), "files", trashInfo.name)
+
+		spinner.UpdateText("Deleting file from trash")
+
+		os.Remove(origin)
+		os.Remove(infoPath)
+
+		spinner.Success(name + " has been permanently deleted")
+
+	}
 }
 
 func list() {

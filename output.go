@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/pterm/pterm"
@@ -73,15 +74,17 @@ func printFileActions(names []string, maxLines int) {
 	pterm.Bold.Println("Affected Files")
 	listItems := make([]pterm.BulletListItem, 0)
 	dirBullet := "🗀 "
+	fileBullet := "🗌 "
 	bulletStyle := pterm.NewStyle(pterm.Bold)
 
 	for _, name := range names {
 		stat, err := os.Stat(name)
+		indent := strings.Count(name[0:len(name)-len(filepath.Base(name))], "/")
 		checkErr(err)
 		if stat.IsDir() {
-			listItems = append(listItems, pterm.BulletListItem{Level: 0, Text: name, Bullet: dirBullet, BulletStyle: bulletStyle})
+			listItems = append(listItems, pterm.BulletListItem{Level: indent, Text: name, Bullet: dirBullet, BulletStyle: bulletStyle})
 		} else {
-			listItems = append(listItems, pterm.BulletListItem{Level: 0, Text: name, Bullet: dirBullet, BulletStyle: bulletStyle})
+			listItems = append(listItems, pterm.BulletListItem{Level: indent, Text: name, Bullet: fileBullet, BulletStyle: bulletStyle})
 		}
 
 	}

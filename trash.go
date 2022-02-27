@@ -83,7 +83,7 @@ func getTrashDir() string {
 	return dirname + "/.local/share/Trash"
 }
 
-func checkTrashExists(name string) bool {
+func trashExists(name string) bool {
 	list := getTrashList()
 
 	for _, f := range list {
