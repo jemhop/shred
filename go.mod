@@ -3,6 +3,7 @@ module shredder
 go 1.17
 
 require (
+	github.com/ahmetb/go-cursor v0.0.0-20131010032410-8136607ea412 // indirect
 	github.com/atomicgo/cursor v0.0.1 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/gookit/color v1.4.2 // indirect

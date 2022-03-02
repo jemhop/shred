@@ -16,13 +16,13 @@ func shred(file string) {
 	os.Remove(file)
 }
 
-//This function parses * as if it is selecting every file in the trash directory
+//This function parses _ as if it is selecting every file in the trash directory if trashDir is set to true
 func getAllPathArgs(args []string, trashDir bool) []string {
 	valid := make([]string, 0)
 
 	for _, arg := range args {
 		if trashDir {
-			if filepath.Base(arg) == "_" {
+			if filepath.Base(arg) == "_" && !trashExists(filepath.Base(arg)) {
 				trash := getTrashList()
 				for _, t := range trash {
 					valid = append(valid, t.name)

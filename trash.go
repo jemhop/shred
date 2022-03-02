@@ -97,6 +97,7 @@ func trashExists(name string) bool {
 func createTrashInfo(filename string, origin string) {
 	//freedesktop trash spec uses RFC3339 format
 	currentTime := time.Now().Format(time.RFC3339)
+	currentTime = currentTime[0 : len(currentTime)-len("+00:00")]
 
 	filename += ".trashinfo"
 	f, err := os.Create(filepath.Join(getTrashDir(), "info", filepath.Base(filename)))

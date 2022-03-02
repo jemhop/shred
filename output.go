@@ -5,8 +5,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
+	"github.com/atomicgo/cursor"
 	"github.com/pterm/pterm"
 )
 
@@ -69,25 +71,38 @@ func printYesNoPrompt(text string, yesDefault bool) bool {
 	}
 }
 
-func printFileActions(names []string, maxLines int) {
-
+func printFileActions(names []string, maxLines int, doIndent bool, showDirs bool) {
 	pterm.Bold.Println("Affected Files")
 	listItems := make([]pterm.BulletListItem, 0)
-	dirBullet := "🗀 "
-	fileBullet := "🗌 "
-	bulletStyle := pterm.NewStyle(pterm.Bold)
+	excludedDirs := 0
 
 	for _, name := range names {
 		stat, err := os.Stat(name)
-		indent := strings.Count(name[0:len(name)-len(filepath.Base(name))], "/")
 		checkErr(err)
-		if stat.IsDir() {
-			listItems = append(listItems, pterm.BulletListItem{Level: indent, Text: name, Bullet: dirBullet, BulletStyle: bulletStyle})
-		} else {
-			listItems = append(listItems, pterm.BulletListItem{Level: indent, Text: name, Bullet: fileBullet, BulletStyle: bulletStyle})
+		indent := 0
+		if doIndent {
+			indent = strings.Count(name[0:len(name)-len(filepath.Base(name))], "/")
 		}
 
+		if !stat.IsDir() {
+			listItems = append(listItems, pterm.BulletListItem{Level: indent, Text: name, Bullet: "🗍", BulletStyle: pterm.NewStyle(pterm.Bold)})
+		} else if showDirs {
+			listItems = append(listItems, pterm.BulletListItem{Level: indent, Text: name, Bullet: "🗀", BulletStyle: pterm.NewStyle(pterm.Bold)})
+		} else {
+			excludedDirs++
+		}
+
+		if len(listItems) == maxLines {
+			break
+		}
 	}
 
 	pterm.DefaultBulletList.WithItems(listItems).Render()
+
+	remaining := len(names[len(listItems):])
+	if remaining-excludedDirs > 0 {
+		cursor.Up(1)
+		pterm.Italic.Println(" ... and " + strconv.Itoa(remaining-excludedDirs) + " other files (folders not counted) \n")
+	}
+
 }

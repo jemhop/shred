@@ -108,13 +108,16 @@ func deleteFiles(names []string) {
 }
 
 func shredFiles(names []string) {
-
 	files := filesFromDirs(names, true)
 
-	printFileActions(files, 5)
+	promptText := "Are you sure you want to delete " + files[0] + " permanently and irretrievably?"
+	if len(files) > 1 {
+		printFileActions(files, 5, false, false)
+		promptText = "Are you sure you want to delete these files permanently and irretrievably?"
+	}
 
 	pterm.NewStyle(pterm.FgRed, pterm.Bold).Println("This deletion cannot be undone by any process, including professional drive recovery")
-	if printYesNoPrompt("Are you sure you want to delete these files permanently and irretrievably?", false) {
+	if printYesNoPrompt(promptText, false) {
 		for _, file := range files {
 
 			spinner, _ := pterm.DefaultSpinner.Start("Shredding " + file)
@@ -126,7 +129,7 @@ func shredFiles(names []string) {
 			}
 
 			if stat.Size() == 0 || stat.IsDir() {
-				spinner.Warning(file + "is 0b or directory, can safely delete")
+				spinner.Warning(file + " is 0b or directory, can safely delete")
 			} else {
 				shred(file)
 				spinner.Success(file + "succesfully shredded")
