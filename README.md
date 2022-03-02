@@ -1,4 +1,4 @@
-# Shredder
+# Shred
 #### _Multifunctional CLI file deletion program_
 
 Shredder is a Freedesktop trash standard compliant CLI program, created because in my opinon rm is not a very human usable tool. Accidentally running rm -r on the wrong directory is never a fun time, and in my opinon `rm -rI` is not a very memorable way to safely delete a directory. 
