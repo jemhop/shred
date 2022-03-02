@@ -23,9 +23,16 @@ func printFiles(files []TrashInfo) {
 
 	tableData := make([][]string, 0)
 
-	tableData = append(tableData, []string{"NAME", "PATH", "DATE DELETED"})
+	tableData = append(tableData, []string{"TYPE", "NAME", "PATH", "DATE DELETED"})
 	for _, file := range files {
-		tableData = append(tableData, []string{file.name, file.path, file.date})
+		prefix := ""
+		if file.folder {
+			prefix = "dir"
+		} else {
+			prefix = "file"
+		}
+
+		tableData = append(tableData, []string{prefix, file.name, file.path, file.date})
 	}
 	pterm.DefaultTable.WithBoxed(true).WithHasHeader().WithHeaderStyle(pterm.NewStyle(pterm.FgRed, pterm.Bold)).WithData(tableData).Render()
 }

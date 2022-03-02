@@ -12,9 +12,10 @@ import (
 //this file hosts everything involved in interacting with the XDG trash specification, followed by gnome + kde
 
 type TrashInfo struct {
-	name string
-	path string
-	date string
+	name   string
+	path   string
+	date   string
+	folder bool
 }
 
 func getTrashList() []TrashInfo {
@@ -36,19 +37,34 @@ func getTrashList() []TrashInfo {
 	}
 
 	for _, file := range files {
-		infoArr = append(infoArr, getTrashInfo(filepath.Join(trashInfoDir, file)))
+		infoArr = append(infoArr, getTrashInfoFile(filepath.Join(trashInfoDir, file)))
 	}
 
 	return infoArr
 }
 
-func getTrashInfo(path string) TrashInfo {
-	file, err := os.Open(path)
+func getTrashInfoFile(path string) TrashInfo {
+	infoFile, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
-	return readTrashLines(file)
+	defer infoFile.Close()
+	info := readTrashLines(infoFile)
+
+	filePath := getFilePathFromInfoPath(path)
+
+	stat, err := os.Stat(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	info.folder = stat.IsDir()
+	return info
+}
+
+func getFilePathFromInfoPath(path string) string {
+	name := filepath.Base(path)
+	return filepath.Join(getTrashDir(), "files", name[0:len(name)-len(".trashinfo")])
 }
 
 //this whole function is very hardcoded, but im not gonna bother supporting things not compliant with freedesktop specs

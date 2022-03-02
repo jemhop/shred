@@ -64,7 +64,7 @@ func recoverFiles(names []string) {
 		spinner.UpdateText("Getting move path")
 
 		infoPath := filepath.Join(getTrashDir(), "info", name+".trashinfo")
-		trashInfo := getTrashInfo(infoPath)
+		trashInfo := getTrashInfoFile(infoPath)
 		origin := filepath.Join(getTrashDir(), "files", trashInfo.name)
 		destination := getSafePath(origin, trashInfo.path)
 
@@ -151,7 +151,7 @@ func eraseFiles(names []string) {
 		spinner.UpdateText("Getting move path")
 
 		infoPath := filepath.Join(getTrashDir(), "info", name+".trashinfo")
-		trashInfo := getTrashInfo(infoPath)
+		trashInfo := getTrashInfoFile(infoPath)
 		origin := filepath.Join(getTrashDir(), "files", trashInfo.name)
 
 		spinner.UpdateText("Deleting file from trash")
