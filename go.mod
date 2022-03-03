@@ -1,4 +1,4 @@
-module shredder
+module shred
 
 go 1.17
 
