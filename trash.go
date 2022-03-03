@@ -22,9 +22,7 @@ func getTrashList() []TrashInfo {
 	trashInfoDir := filepath.Join(getTrashDir(), "info")
 
 	unfiliteredFiles, err := os.ReadDir(trashInfoDir)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkErr(err)
 
 	files := make([]string, 0)
 
@@ -45,18 +43,15 @@ func getTrashList() []TrashInfo {
 
 func getTrashInfoFile(path string) TrashInfo {
 	infoFile, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkErr(err)
+
 	defer infoFile.Close()
 	info := readTrashLines(infoFile)
 
 	filePath := getFilePathFromInfoPath(path)
 
 	stat, err := os.Stat(filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkErr(err)
 
 	info.folder = stat.IsDir()
 	return info
@@ -76,7 +71,6 @@ func readTrashLines(file *os.File) TrashInfo {
 	for sc.Scan() {
 		lastLine++
 		if lastLine == 2 {
-			// you can return sc.Bytes() if you need output in []bytes
 			path = sc.Text()
 		}
 		if lastLine == 3 {
@@ -91,10 +85,7 @@ func readTrashLines(file *os.File) TrashInfo {
 
 func getTrashDir() string {
 	dirname, err := os.UserHomeDir()
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkErr(err)
 
 	return dirname + "/.local/share/Trash"
 }

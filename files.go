@@ -2,22 +2,20 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
 )
 
-func shred(file string) {
-	for i := 0; i < 5; i++ {
-		randomOverwriteFile(file)
+func nOverwriteRuns(file string, n int) {
+	for i := 0; i < n; i++ {
+		overwriteFile(file)
 	}
-	os.Remove(file)
 }
 
 //This function parses _ as if it is selecting every file in the trash directory if trashDir is set to true
-func getAllPathArgs(args []string, trashDir bool) []string {
+func getArgsFromPath(args []string, trashDir bool) []string {
 	valid := make([]string, 0)
 
 	for _, arg := range args {
@@ -38,23 +36,30 @@ func getAllPathArgs(args []string, trashDir bool) []string {
 	return valid
 }
 
-func randomOverwriteFile(path string) {
-	stat, err := os.Stat(path)
-	if err != nil {
-		log.Fatal(err)
-	}
+func overwriteFile(path string) {
+	chunkSize := int64(16000000)
 
-	//file mode doesn't really matter, new file will never be created
-	f, err := os.OpenFile(path, os.O_RDWR, os.FileMode(0707))
-	if err != nil {
-		log.Fatal(err)
-	}
+	stat, err := os.Stat(path)
+	checkErr(err)
+
+	//file mode doesn't really matter, new file creation flag not set
+	f, err := os.OpenFile(path, os.O_RDWR, os.FileMode(0000))
+	checkErr(err)
 
 	size := stat.Size()
 	defer f.Close()
 
-	f.WriteAt(nRandomBytes(size), 0)
+	// if file > 16mb, overwrite in chunks to avoid storing excessive amounts of data in memory at once
+	// if this is stupid and or pointless lmk
+	offset := int64(0)
+	for size > 0 {
+		currentSize := Min(size, chunkSize)
 
+		f.WriteAt(nRandomBytes(currentSize), 0)
+
+		offset += currentSize
+		size -= currentSize
+	}
 }
 
 //takes a list of files, and directories and returns a list of all files
@@ -79,9 +84,7 @@ func filesFromDirs(names []string, includeDirs bool) []string {
 					}
 					return nil
 				})
-			if err != nil {
-				fmt.Println(err)
-			}
+			checkErr(err)
 		}
 
 	}
@@ -89,26 +92,21 @@ func filesFromDirs(names []string, includeDirs bool) []string {
 	return output
 }
 
-//This function will check for duplicates and append a number to the start of the file name to avoid conflicts
-func getSafePath(origin string, dest string) string {
-	suffix := ""
-	i := 0
-
+//This function will check for duplicates and append a number to the end of the file name to avoid conflicts
+func getSafeMovePath(origin string, dest string) string {
 	dest, err := url.QueryUnescape(dest)
+	checkErr(err)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	if fileExists(dest, false) {
+		for i := 1; true; i++ {
+			ext := filepath.Ext(dest)
+			noExt := dest[0 : len(dest)-len(ext)]
 
-	for {
-		extension := filepath.Ext(dest)
-		noExtension := dest[0 : len(dest)-len(extension)]
-		if fileExists(dest+suffix, false) {
-			conv := strconv.Itoa(i + 1)
-			suffix = " (" + conv + ")"
-		} else {
-			return noExtension + suffix + extension
+			suffix := " (" + strconv.Itoa(i) + ")"
+			if !fileExists(dest+suffix, false) && i > 0 {
+				return noExt + suffix + ext
+			}
 		}
-		i++
 	}
+	return dest
 }

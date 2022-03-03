@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 
@@ -29,19 +28,19 @@ func main() {
 					list()
 					break
 				} else if arg == "-r" {
-					valid := getAllPathArgs(args[i+1:], true)
+					valid := getArgsFromPath(args[i+1:], true)
 					recoverFiles(valid)
 					break
 				} else if arg == "-d" {
-					valid := getAllPathArgs(args[i+1:], false)
+					valid := getArgsFromPath(args[i+1:], false)
 					deleteFiles(valid)
 					break
 				} else if arg == "-s" {
-					valid := getAllPathArgs(args[i+1:], false)
+					valid := getArgsFromPath(args[i+1:], false)
 					shredFiles(valid)
 					break
 				} else if arg == "-e" {
-					valid := getAllPathArgs(args[i+1:], true)
+					valid := getArgsFromPath(args[i+1:], true)
 					eraseFiles(valid)
 				} else {
 					invalid()
@@ -66,7 +65,7 @@ func recoverFiles(names []string) {
 		infoPath := filepath.Join(getTrashDir(), "info", name+".trashinfo")
 		trashInfo := getTrashInfoFile(infoPath)
 		origin := filepath.Join(getTrashDir(), "files", trashInfo.name)
-		destination := getSafePath(origin, trashInfo.path)
+		destination := getSafeMovePath(origin, trashInfo.path)
 
 		spinner.UpdateText("Moving file to " + destination)
 
@@ -82,9 +81,7 @@ func deleteFiles(names []string) {
 		spinner, _ := pterm.DefaultSpinner.Start("Checking " + name + " exists")
 
 		workingDir, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-		}
+		checkErr(err)
 
 		if !fileExists(name, false) {
 			spinner.Fail("File name not found")
@@ -95,7 +92,7 @@ func deleteFiles(names []string) {
 
 		uncheckedDest := filepath.Join(getTrashDir(), "files", filepath.Base(name))
 
-		dest := getSafePath(name, uncheckedDest)
+		dest := getSafeMovePath(name, uncheckedDest)
 
 		spinner.UpdateText("Moving file to trash")
 
@@ -131,8 +128,8 @@ func shredFiles(names []string) {
 			if stat.Size() == 0 || stat.IsDir() {
 				spinner.Warning(file + " is 0b or directory, can safely delete")
 			} else {
-				shred(file)
-				spinner.Success(file + "succesfully shredded")
+				nOverwriteRuns(file, 5)
+				spinner.Success(file + " succesfully shredded")
 			}
 			os.Remove(file)
 		}
