@@ -82,7 +82,7 @@ There are many ways to delete files from the terminal, but *most* give little fe
 
 ### A little warning
 
-This project is very work in progress. I wouldn't show this code to my mother. Right now, I've barely tested how it behaves around files with different permissions, but as I use it daily it'll slowly improve.
+This project is very work in progress. I wouldn't show this code to my mother. Right now, I've barely tested how it behaves around files with different permissions or really much at all, but as I use it daily it'll slowly improve.
 
 
 
