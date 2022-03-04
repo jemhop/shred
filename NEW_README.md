@@ -22,7 +22,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -30,7 +29,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/jemhop/shred">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.png" alt="Logo" width="120" height="120">
   </a>
 
 <h3 align="center">shred</h3>
@@ -69,7 +68,11 @@
 <!-- ABOUT THE PROJECT -->
 ## About this project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<img src="images/DelRestore.svg" width=100%>
+<figcaption  ><i>An example of basic usage</i></figcaption>
+
+
+<br />
 
 ### Why
 
@@ -79,7 +82,7 @@ There are many ways to delete files from the terminal, but *most* give little fe
 
 ### A little warning
 
-This project is very work in progress. I wouldn't show this code to my mother. Right now, I've barely tested how it behaves around files with different permissions, but as I use it daily it'll slowly improve.
+This project is very work in progress. I wouldn't show this code to my mother. Right now, I've barely tested how it behaves around files with different permissions or really much at all, but as I use it daily it'll slowly improve.
 
 
 
@@ -93,32 +96,42 @@ This project is very work in progress. I wouldn't show this code to my mother. R
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Deleting and restoring a file
+
+<img src="images/DelRestore.svg" width=65%>
+
+### Listing files in trash
+
+<img src="images/List.svg" width=65%>
+
+### Permanently deleting a file
+
+<img src="images/Shred.svg" width=65%>
+
+| Command | Usage | 
+| --------------- | --------------|
+| l | List files in trash | 
+| h | Display all commands |
+| d | Move a file to trash |
+| r | Restore a file from trash |
+| s | Permanently delete a file |
+| e | Delete a file from trash |
+
+*Note: "_" can be passed to any command relative to the trash directory as a wildcard that selects all files. If there is a file called _ it will be acted on instead*
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+## Installation
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
-
+As of current the only way to install this project is to build it from source using Go. I'm planning to set up an AUR repository eventually.
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -135,7 +148,6 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [issues-shield]: https://img.shields.io/github/issues/jemhop/shred.svg?style=for-the-badge
 [issues-url]: https://github.com/jemhop/shred/issues
 [license-shield]: https://img.shields.io/github/license/jemhop/shred.svg?style=for-the-badge
-[license-url]: https://github.com/jemhop/shred/blob/master/LICENSE.txt
+[license-url]: https://github.com/jemhop/shred/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
