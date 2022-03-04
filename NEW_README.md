@@ -22,7 +22,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -69,7 +68,11 @@
 <!-- ABOUT THE PROJECT -->
 ## About this project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<img src="images/DelRestore.svg" width=100%>
+<figcaption  ><i>An example of basic usage</i></figcaption>
+
+
+<br />
 
 ### Why
 
@@ -96,15 +99,15 @@ This project is very work in progress. I wouldn't show this code to my mother. R
 
 ### Deleting and restoring a file
 
-<img src="images/DelRestore.svg" width=85%>
+<img src="images/DelRestore.svg" width=65%>
 
 ### Listing files in trash
 
-<img src="images/List.svg" width=85%>
+<img src="images/List.svg" width=65%>
 
 ### Permanently deleting a file
 
-<img src="images/Shred.svg" width=85%>
+<img src="images/Shred.svg" width=65%>
 
 | Command | Usage | 
 | --------------- | --------------|
@@ -115,28 +118,20 @@ This project is very work in progress. I wouldn't show this code to my mother. R
 | s | Permanently delete a file |
 | e | Delete a file from trash |
 
+*Note: "_" can be passed to any command relative to the trash directory as a wildcard that selects all files. If there is a file called _ it will be acted on instead*
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+## Installation
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
-
+As of current the only way to install this project is to build it from source using Go. I'm planning to set up an AUR repository eventually.
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
