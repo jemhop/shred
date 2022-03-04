@@ -93,9 +93,27 @@ This project is very work in progress. I wouldn't show this code to my mother. R
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Deleting and restoring a file
+
+<img src="images/DelRestore.svg" width=85%>
+
+### Listing files in trash
+
+<img src="images/List.svg" width=85%>
+
+### Permanently deleting a file
+
+<img src="images/Shred.svg" width=85%>
+
+| Command | Usage | 
+| --------------- | --------------|
+| l | List files in trash | 
+| h | Display all commands |
+| d | Move a file to trash |
+| r | Restore a file from trash |
+| s | Permanently delete a file |
+| e | Delete a file from trash |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -135,7 +153,6 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [issues-shield]: https://img.shields.io/github/issues/jemhop/shred.svg?style=for-the-badge
 [issues-url]: https://github.com/jemhop/shred/issues
 [license-shield]: https://img.shields.io/github/license/jemhop/shred.svg?style=for-the-badge
-[license-url]: https://github.com/jemhop/shred/blob/master/LICENSE.txt
+[license-url]: https://github.com/jemhop/shred/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
