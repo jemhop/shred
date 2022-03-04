@@ -117,7 +117,7 @@ func shredFiles(names []string) {
 	if printYesNoPrompt(promptText, false) {
 		for _, file := range files {
 
-			spinner, _ := pterm.DefaultSpinner.Start("Shredding " + file)
+			spinner, _ := pterm.DefaultSpinner.Start("Checking out " + file)
 
 			stat, err := os.Stat(file)
 			if err != nil {
@@ -128,6 +128,7 @@ func shredFiles(names []string) {
 			if stat.Size() == 0 || stat.IsDir() {
 				spinner.Warning(file + " is 0b or directory, can safely delete")
 			} else {
+				spinner.UpdateText("Shredding " + file)
 				nOverwriteRuns(file, 5)
 				spinner.Success(file + " succesfully shredded")
 			}
